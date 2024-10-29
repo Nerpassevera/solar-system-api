@@ -1,4 +1,4 @@
-from flask import Blueprint, make_response, abort, request
+from flask import Blueprint, make_response, abort, request, Response
 from app.models.planet import Planet
 from .db import db
 
@@ -47,3 +47,16 @@ def validate_planet(planet_id):
         abort(make_response(response, 404))
 
     return planet
+
+@planet_bp.put("/<planet_id>")
+def update_planet(planet_id):
+    planet = validate_planet(planet_id)
+    request_body = request.get_json()
+
+    planet.name = request_body["name"]
+    planet.description = request_body["description"]
+    planet.radius_in_mi = request_body["radius_in_mi"]
+
+    db.session.commit()
+
+    return Response(status=204, mimetype="application/json")
