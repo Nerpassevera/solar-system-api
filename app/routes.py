@@ -29,8 +29,25 @@ def create_planet_helper(request_body):
 
 @planet_bp.get("/", strict_slashes=False)
 def get_all_planets():
-    query = db.select(Planet).order_by(Planet.id)
+    query = db.select(Planet)
+
+    description_param = request.args.get("description")
+    if description_param:
+        query = query.where(Planet.description.ilike(f"%{description_param}%"))
+    
+    radius_in_mi = request.args.get("radius_in_mi")
+    try:
+        radius_in_mi = int(radius_in_mi)
+    except ValueError:
+        radius_in_mi = None
+    if radius_in_mi:
+        query = query.where(Planet.radius_in_mi < 4)
+    
+    query = query.order_by(Planet.id)
+
     planets = db.session.scalars(query)
+
+
     return [ planet.to_dict() for planet in planets]
 
 @planet_bp.get("/<planet_id>", strict_slashes=False)
