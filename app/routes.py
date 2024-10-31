@@ -42,6 +42,13 @@ def get_all_planets():
         radius_in_mi = None
     if radius_in_mi:
         query = query.where(Planet.radius_in_mi < 4)
+
+    sort_param = request.args.get("sort")
+
+    if sort_param:
+        sort_param = sort_param.split("%20")
+        
+        
     
     query = query.order_by(Planet.id)
 
