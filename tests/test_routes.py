@@ -20,3 +20,21 @@ def test_get_one_planet(client, two_saved_planets):
         "description": "only slightly smaller than Earth",
         "radius in miles": 3.760
     }
+
+def test_create_one_book(client):
+    # Act
+    response = client.post("/planets", json={
+        "name": "Earth",
+        "description": "Earth itself",
+        "radius_in_mi" : 3.959
+    })
+    response_body = response.get_json()
+
+    # Assert
+    assert response.status_code == 201
+    assert response_body == {
+        "id": 1,
+        "name": "Earth",
+        "description": "Earth itself",
+        "radius in miles" : 3.959
+    }
