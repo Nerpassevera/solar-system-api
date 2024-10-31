@@ -54,7 +54,7 @@ def get_all_planets():
         sort_param = sort_param.split(" ")
         # Selects the field for sorting based on the user's input (`sort_param[0]`).
         # If no valid sort field is specified, defaults to sorting by Planet.id.
-        sort_field = allowed_sort_fields.get(sort_param[0], Planet.id)
+        sort_field = allowed_sort_fields.get(sort_param[0].lower(), Planet.id)
 
         if sort_param[-1] == "desc":
             query = query.order_by(sort_field.desc())
