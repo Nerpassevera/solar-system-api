@@ -1,5 +1,4 @@
 from flask import Blueprint, make_response, abort, request, Response
-from flask import Blueprint, make_response, abort, request, Response
 from app.models.planet import Planet
 from .db import db
 
@@ -31,29 +30,38 @@ def create_planet_helper(request_body):
 def get_all_planets():
     query = db.select(Planet)
 
+    # Description filter
     description_param = request.args.get("description")
     if description_param:
         query = query.where(Planet.description.ilike(f"%{description_param}%"))
-    
-    radius_in_mi = request.args.get("radius_in_mi")
-    try:
-        radius_in_mi = int(radius_in_mi)
-    except ValueError:
-        radius_in_mi = None
-    if radius_in_mi:
-        query = query.where(Planet.radius_in_mi < 4)
+
+    # Radius in miles filter
+    radius_param = request.args.get("radius_in_mi")
+    if radius_param:
+        try:
+            radius_param = int(radius_param)
+        except ValueError:
+            return []
+        query = query.where(Planet.radius_param < radius_param)
+
+    allowed_sort_fields = {
+        "name": Planet.name,
+        "radius_in_mi": Planet.radius_in_mi,
+    }
 
     sort_param = request.args.get("sort")
-
     if sort_param:
-        sort_param = sort_param.split("%20")
-        
-        
-    
-    query = query.order_by(Planet.id)
+        sort_param = sort_param.split(" ")
+        # Selects the field for sorting based on the user's input (`sort_param[0]`).
+        # If no valid sort field is specified, defaults to sorting by Planet.id.
+        sort_field = allowed_sort_fields.get(sort_param[0], Planet.id)
+
+        if sort_param[-1] == "desc":
+            query = query.order_by(sort_field.desc())
+        else:
+            query = query.order_by(sort_field)
 
     planets = db.session.scalars(query)
-
 
     return [ planet.to_dict() for planet in planets]
 
@@ -112,4 +120,7 @@ def delete_all_planets():
     num_rows_deleted = db.session.query(Planet).delete()
     db.session.commit()
 
-    return Response(status=200, response=f"All {num_rows_deleted} planets have been deleted!", mimetype="application/json")
+    return Response(
+        status=200,
+        response=f"All {num_rows_deleted} planets have been deleted!",
+        mimetype="application/json")
