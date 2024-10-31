@@ -4,6 +4,7 @@ from app.db import db
 from flask.signals import request_finished
 from dotenv import load_dotenv
 import os
+from app.models.planet import Planet
 
 load_dotenv()
 
@@ -30,3 +31,19 @@ def app():
 @pytest.fixture
 def client(app):
     return app.test_client()
+
+@pytest.fixture
+def two_saved_planets(app):
+    # Arrange
+    Mercury = Planet(name="Mercury",
+                      description="about 1/3 the size of Earth",
+                      radius_in_mi=1.516,)
+    Venus = Planet(name="Venus",
+        radius_in_mi=3.760,
+        description="only slightly smaller than Earth")
+
+    db.session.add_all([Mercury, Venus])
+    # Alternatively, we could do
+    # db.session.add(ocean_book)
+    # db.session.add(mountain_book)
+    db.session.commit()
