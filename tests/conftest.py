@@ -35,16 +35,16 @@ def client(app):
 @pytest.fixture
 def two_saved_planets(app):
     # Arrange
-    blue_planet = Planet(
-        name="Blue Planet",
-        description="filled with water",
-        radius_in_mi = 1.516
+    Mercury = Planet(
+        name="Mercury",
+        description="about 1/3 the size of Earth",
+        radius_in_mi=1.516
         )
-    orange_planet = Planet(
-        name="Orange Planet",
-        description="A hot place to spend a vacay",
-        radius_in_mi = 1.516
+    Venus = Planet(
+        name="Venus",
+        radius_in_mi=3.760,
+        description="only slightly smaller than Earth"
         )
 
-    db.session.add_all([blue_planet, orange_planet])
+    db.session.add_all([Mercury, Venus])
     db.session.commit()
