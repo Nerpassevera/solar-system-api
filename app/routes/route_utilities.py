@@ -19,15 +19,7 @@ def validate_model(cls, model_id):
     return model
 
 def create_planet_helper(request_body):
-    name = request_body["name"],
-    description = request_body["description"]
-    radius_in_mi = request_body["radius_in_mi"]
-
-    new_planet = Planet(
-        name=name,
-        description=description,
-        radius_in_mi=radius_in_mi
-    )
+    new_planet = Planet.from_dict(request_body)
     db.session.add(new_planet)
     db.session.commit()
 
