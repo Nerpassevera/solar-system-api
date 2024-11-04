@@ -1,6 +1,8 @@
 from flask import Blueprint, make_response, abort, request, Response
 from app.models.planet import Planet
-from app.db import db
+
+from ..db import db
+from app.routes.route_utilities import validate_model, create_planet_helper
 
 planet_bp = Blueprint("planet_bp", __name__, url_prefix="/planets")
 
@@ -59,28 +61,13 @@ def get_all_planets():
 
 @planet_bp.get("/<planet_id>", strict_slashes=False)
 def get_one_planet(planet_id):
-    planet = validate_planet(planet_id)
+    planet = validate_model(Planet, planet_id)
     return planet.to_dict()
 
-def validate_planet(planet_id):
-    try:
-        planet_id = int(planet_id)
-    except ValueError:
-        response = {"message": f"Planet ID {planet_id} is invalid."}
-        abort(make_response(response, 400))
-
-    query = db.select(Planet).where(Planet.id == planet_id)
-    planet = db.session.scalar(query)
-
-    if not planet:
-        response = {"message": f"Planet with ID {planet_id} not found."}
-        abort(make_response(response, 404))
-
-    return planet
 
 @planet_bp.put("/<planet_id>", strict_slashes=False)
 def update_planet(planet_id):
-    planet = validate_planet(planet_id)
+    planet = validate_model(Planet, planet_id)
     request_body = request.get_json()
 
     planet.name = request_body["name"]
@@ -93,7 +80,7 @@ def update_planet(planet_id):
 
 @planet_bp.delete("/<planet_id>", strict_slashes=False)
 def delete_planet(planet_id):
-    planet = validate_planet(planet_id)
+    planet = validate_model(Planet, planet_id)
     db.session.delete(planet)
     db.session.commit()
 
