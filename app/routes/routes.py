@@ -13,13 +13,6 @@ def add_planet():
 
     return created_planet.to_dict(), 201
 
-def create_planet_helper(request_body):
-    new_planet = Planet.from_dict(request_body)
-    db.session.add(new_planet)
-    db.session.commit()
-
-    return new_planet
-
 @planet_bp.get("/", strict_slashes=False)
 def get_all_planets():
     query = db.select(Planet)
