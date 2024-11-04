@@ -1,6 +1,6 @@
 from flask import Blueprint, make_response, abort, request, Response
 from app.models.planet import Planet
-from .db import db
+from app.db import db
 
 planet_bp = Blueprint("planet_bp", __name__, url_prefix="/planets")
 
@@ -12,15 +12,7 @@ def add_planet():
     return created_planet.to_dict(), 201
 
 def create_planet_helper(request_body):
-    name = request_body["name"],
-    description = request_body["description"]
-    radius_in_mi = request_body["radius_in_mi"]
-
-    new_planet = Planet(
-        name=name,
-        description=description,
-        radius_in_mi=radius_in_mi
-    )
+    new_planet = Planet.from_dict(request_body)
     db.session.add(new_planet)
     db.session.commit()
 

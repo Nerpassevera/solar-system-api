@@ -27,7 +27,7 @@ def test_get_one_planet(client, two_saved_planets):
         "id": 2,
         "name": "Venus",
         "description": "only slightly smaller than Earth",
-        "radius in miles": 3.760
+        "radius_in_mi": 3.760
     }
 
 def test_create_one_book(client):
@@ -45,5 +45,5 @@ def test_create_one_book(client):
         "id": 1,
         "name": "Earth",
         "description": "Earth itself",
-        "radius in miles" : 3.959
+        "radius_in_mi" : 3.959
     }
