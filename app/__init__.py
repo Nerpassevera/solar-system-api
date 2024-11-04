@@ -1,6 +1,6 @@
 from flask import Flask
 from .db import db, migrate
-from app.routes import planet_bp
+from app.routes.planet_routes import planet_bp
 from .models.planet import Planet
 from os import environ
 
