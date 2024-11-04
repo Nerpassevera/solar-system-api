@@ -1,6 +1,10 @@
 from flask import Flask
 from .db import db, migrate
+<<<<<<< HEAD
 from app.routes.routes import planet_bp
+=======
+from app.routes.planet_routes import planet_bp
+>>>>>>> 7ecb400 (refactoring validate_model)
 from .models.planet import Planet
 from os import environ
 
