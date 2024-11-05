@@ -3,12 +3,12 @@ from ..db import db
 from app.models.planet import Planet
 
 def validate_model(cls, model_id):
-    try: 
+    try:
         model_id = int(model_id)
-    except:
+    except ValueError:
         response = {"message": f"{cls.__name__} {model_id} invalid"}
         abort(make_response(response, 400))
-    
+
     query = db.select(cls).where(cls.id == model_id)
     model = db.session.scalar(query)
 
@@ -17,10 +17,3 @@ def validate_model(cls, model_id):
         abort(make_response(response, 404))
 
     return model
-
-def create_planet_helper(request_body):
-    new_planet = Planet.from_dict(request_body)
-    db.session.add(new_planet)
-    db.session.commit()
-
-    return new_planet
