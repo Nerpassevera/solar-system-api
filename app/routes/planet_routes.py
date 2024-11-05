@@ -1,4 +1,4 @@
-from flask import Blueprint, request, Response
+from flask import Blueprint, request, Response, abort, make_response
 from app.routes.route_utilities import validate_model
 from app.models.planet import Planet
 from ..db import db
@@ -8,9 +8,18 @@ planet_bp = Blueprint("planet_bp", __name__, url_prefix="/planets")
 @planet_bp.post("/", strict_slashes=False)
 def add_planet():
     request_body = request.get_json()
-    created_planet = create_planet_helper(request_body)
+    try:
+        created_planet = create_planet_helper(request_body)
+        return created_planet.to_dict(), 201
 
-    return created_planet.to_dict(), 201
+    except KeyError as mismatch:
+        if not request_body:
+            message = {"message": "ERROR: No parameters for planet has been passed!"}
+        else:
+            message = {
+                "message": f"ERROR: Missing the {mismatch.args[0]} parameter for creating a planet"
+                }
+        abort(make_response(message, 400))
 
 def create_planet_helper(request_body):
     new_planet = Planet.from_dict(request_body)
